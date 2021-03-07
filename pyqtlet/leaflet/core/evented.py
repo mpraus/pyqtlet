@@ -8,7 +8,7 @@ from ... import mapwidget
 
 class Evented(QObject):
     '''
-    Base class for all pyqtlet objects. 
+    Base class for all pyqtlet objects.
     Handles initiation, as well as all python<->js communication
     '''
     mapWidget = None
@@ -22,7 +22,7 @@ class Evented(QObject):
         widget and thus the ability to implement leaflet via python.
 
         :param pyqtlet.MapWidget mapWidget: The mapwidget object
-            Should only be sent once, when the first object is being 
+            Should only be sent once, when the first object is being
             initialised.
         '''
         super().__init__()
@@ -51,13 +51,13 @@ class Evented(QObject):
         Can be used for custom use cases where information is required
         from the mapwidget, and the existing code does not cover the
         requirement
-        
+
         :param str js: The javascript code
-        :param function callback: The function that will consume the 
+        :param function callback: The function that will consume the
             javascript response
 
-        .. note:: 
-            Qt runs runJavaScript function asynchronously. So if we want 
+        .. note::
+            Qt runs runJavaScript function asynchronously. So if we want
             to get a response from leaflet, we need to force it to be sync
             In all that I have tried, I was unable to get the response from
             the same function, so I am converting it to a method with callback
@@ -88,7 +88,7 @@ class Evented(QObject):
             leaflet object
         '''
         # Creates the js object on the mapWidget page
-        js = 'var {name} = {jsObject}'.format(name=self.jsName, 
+        js = 'var {name} = {jsObject}'.format(name=self.jsName,
                 jsObject=leafletJsObject)
         self.runJavaScript(js)
         # register the object in the channel
@@ -141,7 +141,8 @@ class Evented(QObject):
         if type(object_) is list:
             return [self._qJsonValueToDict(item) for item in object_]
         if type(object_) is dict:
-            return {key: self._qJsonValueToDict(object_[key]) for key in object_}
+            return [self._qJsonValueToDict(value) for key, value in object_]
+            # return {key: self._qJsonValueToDict(object_[key]) for key in object_}
         return object_
 
     def _qJsonToRespectiveType(self, object_):
@@ -161,4 +162,3 @@ class Evented(QObject):
             return object_.toString()
         if object_.isUndefined():
             return None
-
